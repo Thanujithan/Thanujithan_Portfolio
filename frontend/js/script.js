@@ -1,156 +1,131 @@
 document.addEventListener("DOMContentLoaded", () => {
-    /* =========================
-       ELEMENTS
-    ========================= */
-
     const body = document.body;
-
     const themeToggle = document.getElementById("themeToggle");
-    const themeIcon = themeToggle
-        ? themeToggle.querySelector("i")
-        : null;
+    const themeIcon = themeToggle?.querySelector("i");
 
     const menuButton = document.getElementById("menuButton");
-    const menuIcon = menuButton
-        ? menuButton.querySelector("i")
-        : null;
-
+    const menuIcon = menuButton?.querySelector("i");
     const navbar = document.querySelector(".navbar");
     const navLinks = document.querySelectorAll(".navbar a");
-    const sections = document.querySelectorAll("main section");
-
-    const contactForm = document.getElementById("contactForm");
-    const formMessage = document.getElementById("formMessage");
+    const sections = document.querySelectorAll("main section[id]");
 
     const typingText = document.getElementById("typingText");
 
+    const showMoreBtn = document.getElementById("showMoreBtn");
+    const projectsContainer = document.getElementById("projectsContainer");
+
+    const contactForm = document.getElementById("contactForm");
+    const formMessage = document.getElementById("formMessage");
+    const sendButton = contactForm?.querySelector('button[type="submit"]');
+
     /* =========================
-       DARK / LIGHT THEME
+       Theme Toggle
     ========================= */
 
     const savedTheme = localStorage.getItem("portfolio-theme");
 
     if (savedTheme === "light") {
         body.classList.add("light-theme");
-
-        if (themeIcon) {
-            themeIcon.classList.remove("fa-sun");
-            themeIcon.classList.add("fa-moon");
-        }
     }
 
-    if (themeToggle) {
-        themeToggle.addEventListener("click", () => {
-            body.classList.toggle("light-theme");
+    function updateThemeIcon() {
+        if (!themeIcon) return;
 
-            const isLightTheme =
-                body.classList.contains("light-theme");
+        const isLight = body.classList.contains("light-theme");
 
-            if (themeIcon) {
-                if (isLightTheme) {
-                    themeIcon.classList.remove("fa-sun");
-                    themeIcon.classList.add("fa-moon");
-                } else {
-                    themeIcon.classList.remove("fa-moon");
-                    themeIcon.classList.add("fa-sun");
-                }
-            }
-
-            localStorage.setItem(
-                "portfolio-theme",
-                isLightTheme ? "light" : "dark"
-            );
-        });
+        themeIcon.classList.toggle("fa-sun", !isLight);
+        themeIcon.classList.toggle("fa-moon", isLight);
     }
 
-    /* =========================
-       MOBILE MENU
-    ========================= */
+    updateThemeIcon();
 
-    if (menuButton && navbar) {
-        menuButton.addEventListener("click", () => {
-            navbar.classList.toggle("show-menu");
+    themeToggle?.addEventListener("click", () => {
+        body.classList.toggle("light-theme");
 
-            const menuOpened =
-                navbar.classList.contains("show-menu");
+        const isLight = body.classList.contains("light-theme");
 
-            if (menuIcon) {
-                menuIcon.classList.toggle(
-                    "fa-bars",
-                    !menuOpened
-                );
+        localStorage.setItem(
+            "portfolio-theme",
+            isLight ? "light" : "dark"
+        );
 
-                menuIcon.classList.toggle(
-                    "fa-xmark",
-                    menuOpened
-                );
-            }
-        });
-    }
-
-    navLinks.forEach((link) => {
-        link.addEventListener("click", () => {
-            if (navbar) {
-                navbar.classList.remove("show-menu");
-            }
-
-            if (menuIcon) {
-                menuIcon.classList.remove("fa-xmark");
-                menuIcon.classList.add("fa-bars");
-            }
-        });
+        updateThemeIcon();
     });
 
-    /* Close mobile menu when clicking outside */
+    /* =========================
+       Mobile Menu
+    ========================= */
+
+    function closeMenu() {
+        navbar?.classList.remove("show-menu");
+
+        if (menuIcon) {
+            menuIcon.classList.remove("fa-xmark");
+            menuIcon.classList.add("fa-bars");
+        }
+
+        menuButton?.setAttribute("aria-expanded", "false");
+    }
+
+    menuButton?.setAttribute("aria-expanded", "false");
+
+    menuButton?.addEventListener("click", () => {
+        if (!navbar) return;
+
+        const isOpen = navbar.classList.toggle("show-menu");
+
+        menuIcon?.classList.toggle("fa-bars", !isOpen);
+        menuIcon?.classList.toggle("fa-xmark", isOpen);
+
+        menuButton.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    navLinks.forEach((link) => {
+        link.addEventListener("click", closeMenu);
+    });
 
     document.addEventListener("click", (event) => {
         if (!navbar || !menuButton) return;
 
-        const clickedInsideNavbar =
-            navbar.contains(event.target);
+        if (
+            !navbar.contains(event.target) &&
+            !menuButton.contains(event.target)
+        ) {
+            closeMenu();
+        }
+    });
 
-        const clickedMenuButton =
-            menuButton.contains(event.target);
-
-        if (!clickedInsideNavbar && !clickedMenuButton) {
-            navbar.classList.remove("show-menu");
-
-            if (menuIcon) {
-                menuIcon.classList.remove("fa-xmark");
-                menuIcon.classList.add("fa-bars");
-            }
+    window.addEventListener("resize", () => {
+        if (window.innerWidth > 850) {
+            closeMenu();
         }
     });
 
     /* =========================
-       ACTIVE NAVIGATION LINK
+       Active Navigation
     ========================= */
 
     function updateActiveNavigation() {
+        const scrollPosition = window.scrollY + 170;
         let currentSection = "home";
 
         sections.forEach((section) => {
-            const sectionTop = section.offsetTop - 180;
-            const sectionBottom =
-                sectionTop + section.offsetHeight;
+            const top = section.offsetTop;
+            const bottom = top + section.offsetHeight;
 
             if (
-                window.scrollY >= sectionTop &&
-                window.scrollY < sectionBottom
+                scrollPosition >= top &&
+                scrollPosition < bottom
             ) {
                 currentSection = section.id;
             }
         });
 
         navLinks.forEach((link) => {
-            link.classList.remove("active");
-
-            if (
-                link.getAttribute("href") ===
-                `#${currentSection}`
-            ) {
-                link.classList.add("active");
-            }
+            link.classList.toggle(
+                "active",
+                link.getAttribute("href") === `#${currentSection}`
+            );
         });
     }
 
@@ -163,115 +138,80 @@ document.addEventListener("DOMContentLoaded", () => {
     updateActiveNavigation();
 
     /* =========================
-       CIRCULAR SKILL ANIMATION
+       Skills Animation
     ========================= */
 
     const skillCircles = document.querySelectorAll(
-        ".compact-skill-circle"
+        ".compact-skill-circle[data-progress]"
     );
 
-    /*
-       Set all circles and numbers to zero
-       when the page is loaded/refreshed.
-    */
-
     skillCircles.forEach((circle) => {
-        const progressCircle = circle.querySelector(
+        const progress = circle.querySelector(
             ".compact-circle-progress"
         );
 
-        const percentageText = circle.querySelector("small");
+        const percentage = circle.querySelector("small");
 
-        if (progressCircle) {
-            progressCircle.style.setProperty(
-                "--progress",
-                "0deg"
-            );
+        progress?.style.setProperty("--progress", "0deg");
+
+        if (percentage) {
+            percentage.textContent = "0%";
         }
 
-        if (percentageText) {
-            percentageText.textContent = "0%";
-        }
-
-        circle.classList.remove("animation-complete");
         circle.dataset.animated = "false";
+        circle.classList.remove("animation-complete");
     });
 
-    function animateSkillCircle(circle, delay = 0) {
-        if (circle.dataset.animated === "true") {
-            return;
-        }
+    function animateSkill(circle, delay = 0) {
+        if (circle.dataset.animated === "true") return;
+
+        const progress = circle.querySelector(
+            ".compact-circle-progress"
+        );
+
+        const percentage = circle.querySelector("small");
+
+        const target = Math.min(
+            100,
+            Math.max(
+                0,
+                Number(circle.dataset.progress) || 0
+            )
+        );
+
+        if (!progress || !percentage) return;
 
         circle.dataset.animated = "true";
 
-        const progressCircle = circle.querySelector(
-            ".compact-circle-progress"
-        );
-
-        const percentageText = circle.querySelector("small");
-
-        const targetPercentage = Number(
-            circle.dataset.progress
-        );
-
-        if (
-            !progressCircle ||
-            !percentageText ||
-            Number.isNaN(targetPercentage)
-        ) {
-            return;
-        }
-
-        const safeTarget = Math.min(
-            Math.max(targetPercentage, 0),
-            100
-        );
-
         setTimeout(() => {
             const duration = 1400;
-            const startTime = performance.now();
+            const start = performance.now();
 
-            function updateProgress(currentTime) {
-                const elapsedTime = currentTime - startTime;
+            function animate(time) {
+                const elapsed = time - start;
+                const value = Math.min(elapsed / duration, 1);
 
-                const animationProgress = Math.min(
-                    elapsedTime / duration,
-                    1
-                );
+                const eased =
+                    1 - Math.pow(1 - value, 3);
 
-                /*
-                   Smooth animation:
-                   starts slowly, speeds up, ends smoothly.
-                */
+                const current = Math.round(target * eased);
 
-                const easedProgress =
-                    1 - Math.pow(1 - animationProgress, 3);
-
-                const currentPercentage = Math.round(
-                    safeTarget * easedProgress
-                );
-
-                const currentDegree =
-                    currentPercentage * 3.6;
-
-                progressCircle.style.setProperty(
+                progress.style.setProperty(
                     "--progress",
-                    `${currentDegree}deg`
+                    `${current * 3.6}deg`
                 );
 
-                percentageText.textContent =
-                    `${currentPercentage}%`;
+                percentage.textContent = `${current}%`;
 
-                if (animationProgress < 1) {
-                    requestAnimationFrame(updateProgress);
+                if (value < 1) {
+                    requestAnimationFrame(animate);
                 } else {
-                    progressCircle.style.setProperty(
+                    progress.style.setProperty(
                         "--progress",
-                        `${safeTarget * 3.6}deg`
+                        `${target * 3.6}deg`
                     );
 
-                    percentageText.textContent =
-                        `${safeTarget}%`;
+                    percentage.textContent = `${target}%`;
 
                     circle.classList.add(
                         "animation-complete"
@@ -279,92 +219,179 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            requestAnimationFrame(updateProgress);
+            requestAnimationFrame(animate);
         }, delay);
     }
-
-    /*
-       Animation starts only when the skills
-       section enters the screen.
-    */
-
-    const skillObserver = new IntersectionObserver(
-        (entries, observer) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-
-                const visibleCircles =
-                    entry.target.querySelectorAll(
-                        ".compact-skill-circle"
-                    );
-
-                visibleCircles.forEach((circle, index) => {
-                    animateSkillCircle(circle, index * 90);
-                });
-
-                /*
-                   Animation runs once per page load.
-                   Refreshing the page resets it.
-                */
-
-                observer.unobserve(entry.target);
-            });
-        },
-        {
-            threshold: 0.18,
-            rootMargin: "0px 0px -60px 0px"
-        }
-    );
 
     const skillsSection =
         document.getElementById("skills");
 
-    if (skillsSection) {
+    if (
+        skillsSection &&
+        "IntersectionObserver" in window
+    ) {
+        const skillObserver =
+            new IntersectionObserver(
+                (entries, observer) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) return;
+
+                        const circles =
+                            entry.target.querySelectorAll(
+                                ".compact-skill-circle[data-progress]"
+                            );
+
+                        circles.forEach(
+                            (circle, index) => {
+                                animateSkill(
+                                    circle,
+                                    index * 90
+                                );
+                            }
+                        );
+
+                        observer.unobserve(entry.target);
+                    });
+                },
+                {
+                    threshold: 0.18,
+                    rootMargin: "0px 0px -60px 0px"
+                }
+            );
+
         skillObserver.observe(skillsSection);
+    } else {
+        skillCircles.forEach((circle, index) => {
+            animateSkill(circle, index * 70);
+        });
     }
 
     /* =========================
-       CONTACT FORM
+       Show More Projects
     ========================= */
 
-    if (contactForm) {
+    if (showMoreBtn && projectsContainer) {
+        const buttonText =
+            showMoreBtn.querySelector("span");
+
+        showMoreBtn.addEventListener("click", () => {
+            const isShowingAll =
+                projectsContainer.classList.toggle(
+                    "show-all"
+                );
+
+            showMoreBtn.classList.toggle(
+                "active",
+                isShowingAll
+            );
+
+            showMoreBtn.setAttribute(
+                "aria-expanded",
+                String(isShowingAll)
+            );
+
+            if (buttonText) {
+                buttonText.textContent =
+                    isShowingAll
+                        ? "Show Less"
+                        : "Show More";
+            }
+
+            if (!isShowingAll) {
+                document
+                    .getElementById("projects")
+                    ?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+            }
+        });
+    }
+
+    /* =========================
+       Contact Form - EmailJS
+    ========================= */
+
+    if (contactForm && sendButton) {
         contactForm.addEventListener(
             "submit",
-            (event) => {
+            async (event) => {
                 event.preventDefault();
 
-                const nameInput =
-                    document.getElementById("name");
+                const originalButtonContent =
+                    sendButton.innerHTML;
 
-                const name = nameInput
-                    ? nameInput.value.trim()
-                    : "";
+                sendButton.disabled = true;
+                sendButton.innerHTML =
+                    'Sending... <i class="fa-solid fa-spinner fa-spin"></i>';
 
                 if (formMessage) {
-                    formMessage.textContent =
-                        `Thank you ${name || "for contacting me"}. Your message is ready to be submitted.`;
+                    formMessage.textContent = "Sending message...";
+                    formMessage.classList.add("show-message");
+                }
+                const now = new Date();
 
-                    formMessage.classList.add(
-                        "show-message"
+                    document.getElementById("sentDate").value =
+                        now.toLocaleDateString("en-GB");
+
+                    document.getElementById("sentTime").value =
+                        now.toLocaleTimeString("en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit"
+                        });
+
+                    await emailjs.sendForm(
+                        "service_fbpr9bm",
+                        "template_67abrsw",
+                        contactForm,
+                        {
+                            publicKey: "5vVSBeW_z2nhj83ZR"
+                        }
+                    );
+
+                try {
+                    await emailjs.sendForm(
+                        "service_fbpr9bm",
+                        "template_67abrsw",
+                        contactForm
+                    );
+
+                    if (formMessage) {
+                        formMessage.textContent =
+                            "Message sent successfully!";
+                    }
+
+                    contactForm.reset();
+                }  catch (error) {
+                    console.error("EmailJS full error:", error);
+                    console.error("Status:", error.status);
+                    console.error("Message:", error.text);
+
+                    alert(
+                        `EmailJS Error ${error.status}: ${error.text}`
                     );
                 }
+                 finally {
+                    sendButton.disabled = false;
+                    sendButton.innerHTML =
+                        originalButtonContent;
 
-                contactForm.reset();
-
-                setTimeout(() => {
-                    if (formMessage) {
-                        formMessage.textContent = "";
-                        formMessage.classList.remove(
-                            "show-message"
-                        );
-                    }
-                }, 5000);
+                    setTimeout(() => {
+                        if (formMessage) {
+                            formMessage.textContent = "";
+                            formMessage.classList.remove(
+                                "show-message"
+                            );
+                        }
+                    }, 5000);
+                }
             }
         );
     }
 
     /* =========================
-       TYPING ANIMATION
+       Typing Animation
     ========================= */
 
     const titles = [
@@ -377,55 +404,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let titleIndex = 0;
     let characterIndex = 0;
-    let isDeleting = false;
+    let deleting = false;
 
     function typingAnimation() {
         if (!typingText) return;
 
-        const currentTitle = titles[titleIndex];
+        const title = titles[titleIndex];
 
-        if (!isDeleting) {
+        if (!deleting) {
             characterIndex++;
 
             typingText.textContent =
-                currentTitle.substring(
-                    0,
-                    characterIndex
-                );
+                title.substring(0, characterIndex);
 
-            if (characterIndex === currentTitle.length) {
-                isDeleting = true;
+            if (characterIndex === title.length) {
+                deleting = true;
 
-                setTimeout(
-                    typingAnimation,
-                    1500
-                );
-
+                setTimeout(typingAnimation, 1500);
                 return;
             }
         } else {
             characterIndex--;
 
             typingText.textContent =
-                currentTitle.substring(
-                    0,
-                    characterIndex
-                );
+                title.substring(0, characterIndex);
 
             if (characterIndex === 0) {
-                isDeleting = false;
+                deleting = false;
 
                 titleIndex =
-                    (titleIndex + 1) %
-                    titles.length;
+                    (titleIndex + 1) % titles.length;
             }
         }
 
-        const typingSpeed = isDeleting ? 45 : 85;
-
         setTimeout(
             typingAnimation,
-            typingSpeed
+            deleting ? 45 : 85
         );
     }
 

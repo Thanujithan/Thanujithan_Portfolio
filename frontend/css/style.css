@@ -1,3 +1,6 @@
+
+
+
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
 
 /* =========================
@@ -488,7 +491,11 @@ button {
 .image-border {
     width: min(390px, 80vw);
     aspect-ratio: 1;
-    padding: 7px;
+    padding: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     border-radius: 50%;
 
@@ -503,18 +510,23 @@ button {
         0 0 70px rgba(167, 139, 250, 0.25);
 
     animation: floatingImage 4s ease-in-out infinite;
+    overflow: hidden;
 }
 
 .image-border img {
     width: 100%;
     height: 100%;
 
+    border: 5px solid var(--background-color);
     border-radius: 50%;
 
     background: var(--card-color);
-    object-fit: cover;
-}
 
+    object-fit: cover;
+    object-position: center 20%;
+
+    transform: scale(0.98);
+}
 @keyframes floatingImage {
     0%,
     100% {
@@ -961,7 +973,7 @@ button {
 
 .projects-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 25px;
 }
 
@@ -1558,205 +1570,88 @@ button {
 }
 
 /* =========================
-   SMALL MOBILE
+   SHOW MORE PROJECTS
 ========================= */
 
-@media (max-width: 480px) {
-    .programming-grid,
-    .web-grid,
-    .tools-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.extra-project {
+    display: none;
+}
 
-    .compact-category-title {
-        width: 100%;
-        font-size: 0.8rem;
-    }
+.projects-container.show-all .extra-project {
+    display: block;
+    animation: projectFadeUp 0.6s ease both;
+}
 
-    /* =========================
-   CIRCULAR SKILL ANIMATION
-========================= */
+.show-more-container {
+    width: 100%;
+    margin-top: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-.compact-skill-card {
-    min-width: 0;
-    padding: 5px 3px;
-
-    text-align: center;
-
-    border: 1px solid transparent;
-    border-radius: 11px;
-
+#showMoreBtn {
+    min-width: 155px;
+    min-height: 46px;
+    padding: 0 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        var(--secondary-color)
+    );
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(56, 189, 248, 0.22);
     transition:
         transform 0.3s ease,
-        border-color 0.3s ease,
-        background-color 0.3s ease,
         box-shadow 0.3s ease;
 }
 
-.compact-skill-card:hover {
-    border-color: var(--primary-color);
-    background: var(--card-color);
-
-    transform: translateY(-4px);
-    box-shadow: 0 8px 20px var(--shadow-color);
+#showMoreBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(56, 189, 248, 0.3);
 }
 
-.compact-skill-circle {
-    position: relative;
-
-    width: 67px;
-    height: 67px;
-    margin: 0 auto 4px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 50%;
-
-    transform: scale(1);
-    opacity: 1;
-
-    transition:
-        transform 0.35s ease,
-        filter 0.35s ease;
+#showMoreBtn i {
+    transition: transform 0.3s ease;
 }
 
-.compact-circle-progress {
-    --progress: 0deg;
-
-    position: absolute;
-    inset: 0;
-
-    border-radius: 50%;
-
-    background: conic-gradient(
-        from 0deg,
-        var(--primary-color) 0deg,
-        var(--secondary-color) var(--progress),
-        var(--border-color) var(--progress),
-        var(--border-color) 360deg
-    );
-
-    transform: rotate(-90deg);
-
-    filter:
-        drop-shadow(
-            0 0 2px rgba(56, 189, 248, 0.35)
-        );
-
-    will-change: background;
+#showMoreBtn.active i {
+    transform: rotate(180deg);
 }
 
-.compact-circle-progress::before {
-    content: "";
+@keyframes projectFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
 
-    position: absolute;
-    inset: 5px;
-
-    border-radius: 50%;
-
-    background: var(--card-color);
-
-    box-shadow:
-        inset 0 0 8px rgba(15, 23, 42, 0.4);
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.compact-circle-content {
-    position: relative;
-    z-index: 2;
-
-    width: 49px;
-    height: 49px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-}
-
-.compact-circle-content i {
-    color: var(--muted-text);
-    font-size: 1.35rem;
-
-    transition:
-        color 0.3s ease,
-        transform 0.3s ease,
-        filter 0.3s ease;
-}
-
-.compact-circle-content small {
-    min-width: 26px;
-    margin-top: 1px;
-
-    color: var(--primary-color);
-
-    font-size: 0.5rem;
-    font-weight: 700;
-    line-height: 1;
-
-    text-align: center;
-
-    transition:
-        color 0.3s ease,
-        transform 0.3s ease;
-}
-
-.skill-letter {
-    color: var(--primary-color);
-    font-size: 1.25rem;
-    font-weight: 800;
-
-    transition:
-        color 0.3s ease,
-        transform 0.3s ease,
-        filter 0.3s ease;
-}
-
-.express-letter {
-    font-size: 0.95rem;
-}
-
-.compact-skill-card:hover
-.compact-circle-content i,
-.compact-skill-card:hover
-.skill-letter {
-    transform: scale(1.12);
-    filter: drop-shadow(
-        0 0 5px var(--primary-color)
-    );
-}
-
-.compact-skill-card:hover
-.compact-circle-content small {
-    transform: scale(1.08);
-}
-
-.compact-skill-card h4 {
-    color: var(--text-color);
-
-    font-size: 0.64rem;
-    font-weight: 600;
-
-    white-space: nowrap;
-}
-
-/* Animation completed effect */
+/* =========================
+   EXTRA ANIMATION STATES
+========================= */
 
 .compact-skill-circle.animation-complete {
     animation: skillCirclePulse 0.55s ease;
 }
 
-.compact-skill-circle.animation-complete
-.compact-circle-progress {
+.compact-skill-circle.animation-complete .compact-circle-progress {
     filter:
-        drop-shadow(
-            0 0 4px rgba(56, 189, 248, 0.7)
-        )
-        drop-shadow(
-            0 0 7px rgba(167, 139, 250, 0.4)
-        );
+        drop-shadow(0 0 4px rgba(56, 189, 248, 0.7))
+        drop-shadow(0 0 7px rgba(167, 139, 250, 0.4));
 }
 
 .compact-skill-circle.animation-complete
@@ -1765,16 +1660,13 @@ button {
 }
 
 @keyframes skillCirclePulse {
-    0% {
+    0%,
+    100% {
         transform: scale(1);
     }
 
     50% {
         transform: scale(1.09);
-    }
-
-    100% {
-        transform: scale(1);
     }
 }
 
@@ -1795,19 +1687,9 @@ button {
     }
 }
 
-/* Contact success message */
-
 #formMessage {
-    min-height: 20px;
-
-    text-align: center;
-    color: var(--primary-color);
-
-    font-size: 0.87rem;
-
     opacity: 0;
     transform: translateY(5px);
-
     transition:
         opacity 0.3s ease,
         transform 0.3s ease;
@@ -1818,16 +1700,26 @@ button {
     transform: translateY(0);
 }
 
-/* Reduce animations when selected in device settings */
+/* =========================
+   SMALL MOBILE
+========================= */
 
-@media (prefers-reduced-motion: reduce) {
-    .compact-skill-circle,
-    .compact-circle-content i,
-    .compact-circle-content small {
-        animation: none !important;
-        transition: none !important;
+@media (max-width: 480px) {
+    .programming-grid,
+    .web-grid,
+    .tools-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-}
+
+    .compact-category-title {
+        width: 100%;
+        font-size: 0.8rem;
+    }
+
+    .project-links {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
 }
 
 /* =========================
@@ -1861,5 +1753,20 @@ button {
 
     .footer {
         align-items: flex-start;
+    }
+
+    #showMoreBtn {
+        min-width: 145px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
