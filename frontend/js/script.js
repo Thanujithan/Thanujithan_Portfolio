@@ -362,6 +362,32 @@ document.addEventListener("DOMContentLoaded", () => {
                             "Message sent successfully!";
                     }
 
+                    // Save message to MongoDB
+                    try {
+                        const response = await fetch("http://localhost:5000/api/contact", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                name: document.getElementById("name").value,
+                                email: document.getElementById("email").value,
+                                subject: document.getElementById("subject").value,
+                                message: document.getElementById("message").value
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(data.message || "Failed to save message");
+                        }
+
+                        console.log("Saved to MongoDB:", data);
+                    } catch (err) {
+                        console.error("MongoDB Error:", err);
+                    }
+
                     contactForm.reset();
                 }  catch (error) {
                     console.error("EmailJS full error:", error);
