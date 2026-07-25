@@ -60,6 +60,52 @@ router.get("/", adminAuth, async (req, res) => {
     }
 });
 
+// Update contact message status
+router.patch("/:id/status", adminAuth, async (req, res) => {
+    try {
+        const { status } = req.body;
+
+        const allowedStatuses = ["new", "read", "replied"];
+
+        if (!allowedStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid message status"
+            });
+        }
+
+        const contact = await Contact.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!contact) {
+            return res.status(404).json({
+                success: false,
+                message: "Message not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Message status updated successfully",
+            data: contact
+        });
+
+    } catch (error) {
+        console.error("Update status error:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to update message status"
+        });
+    }
+});
+
 // Protected route - delete message
 router.delete("/:id", adminAuth, async (req, res) => {
     try {
