@@ -267,6 +267,225 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* =========================
+       Projects From MongoDB
+    ========================= */
+
+    const PROJECTS_API_URL = "http://localhost:5000/api/projects";
+
+    function escapeHTML(value = "") {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function getProjectImage(imageUrl = "") {
+        const value = String(imageUrl).trim();
+
+        if (!value) {
+            return "images/default-project.png";
+        }
+
+        return value;
+    }
+
+    function updateShowMoreButton(projectCount) {
+        if (!showMoreBtn || !projectsContainer) return;
+
+        const visibleProjectLimit = 3;
+        const shouldShowButton =
+            projectCount > visibleProjectLimit;
+
+        showMoreBtn.style.display =
+            shouldShowButton ? "" : "none";
+
+        showMoreBtn.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+        showMoreBtn.classList.remove("active");
+        projectsContainer.classList.remove("show-all");
+
+        const buttonText =
+            showMoreBtn.querySelector("span");
+
+        if (buttonText) {
+            buttonText.textContent = "Show More";
+        }
+    }
+
+    async function loadPortfolioProjects() {
+        if (!projectsContainer) return;
+
+        projectsContainer.innerHTML =
+            '<p class="projects-loading">Loading projects...</p>';
+
+        try {
+            const response = await fetch(
+                PROJECTS_API_URL
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    "Failed to load projects"
+                );
+            }
+
+            const projects =
+                Array.isArray(data)
+                    ? data
+                    : data.projects || [];
+
+            if (projects.length === 0) {
+                projectsContainer.innerHTML =
+                    '<p class="projects-empty">No projects available.</p>';
+
+                updateShowMoreButton(0);
+                return;
+            }
+
+            projectsContainer.innerHTML =
+                projects
+                    .map((project, index) => {
+                        const title =
+                            escapeHTML(
+                                project.title ||
+                                "Untitled Project"
+                            );
+
+                        const description =
+                            escapeHTML(
+                                project.description || ""
+                            );
+
+                        const imageUrl =
+                            escapeHTML(
+                                getProjectImage(
+                                    project.imageUrl
+                                )
+                            );
+
+                        const technologies =
+                            Array.isArray(
+                                project.technologies
+                            )
+                                ? project.technologies
+                                : String(
+                                      project.technologies || ""
+                                  )
+                                      .split(",")
+                                      .map(
+                                          (technology) =>
+                                              technology.trim()
+                                      )
+                                      .filter(Boolean);
+
+                        const technologyTags =
+                            technologies
+                                .map(
+                                    (technology) =>
+                                        `<span>${escapeHTML(
+                                            technology
+                                        )}</span>`
+                                )
+                                .join("");
+
+                        const githubLink =
+                            project.githubUrl
+                                ? `
+                                    <a
+                                        href="${escapeHTML(
+                                            project.githubUrl
+                                        )}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <i class="fa-brands fa-github"></i>
+                                        GitHub
+                                    </a>
+                                `
+                                : "";
+
+                        const liveLink =
+                            project.liveUrl
+                                ? `
+                                    <a
+                                        href="${escapeHTML(
+                                            project.liveUrl
+                                        )}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                        Live Demo
+                                    </a>
+                                `
+                                : "";
+
+                        return `
+                            <article
+                                class="project-card ${index >= 3 ? "extra-project" : ""}"
+                                style="animation-delay: ${index * 0.12}s"
+                            >
+                                <div class="project-image">
+                                    <img
+                                        src="${imageUrl}"
+                                        alt="${title}"
+                                        loading="lazy"
+                                        onerror="
+                                            this.onerror = null;
+                                            this.src = 'images/default-project.png';
+                                        "
+                                    >
+                                </div>
+
+                                <div class="project-content">
+                                    <h3>${title}</h3>
+
+                                    <p>${description}</p>
+
+                                    <div class="project-technologies">
+                                        ${technologyTags}
+                                    </div>
+
+                                    <div class="project-links">
+                                        ${githubLink}
+                                        ${liveLink}
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    })
+                    .join("");
+
+            updateShowMoreButton(
+                projects.length
+            );
+
+        } catch (error) {
+            console.error(
+                "Project load error:",
+                error
+            );
+
+            projectsContainer.innerHTML = `
+                <p class="projects-error">
+                    Unable to load projects.
+                    Make sure the backend server is running.
+                </p>
+            `;
+
+            updateShowMoreButton(0);
+        }
+    }
+
+    /* =========================
        Show More Projects
     ========================= */
 
@@ -274,42 +493,47 @@ document.addEventListener("DOMContentLoaded", () => {
         const buttonText =
             showMoreBtn.querySelector("span");
 
-        showMoreBtn.addEventListener("click", () => {
-            const isShowingAll =
-                projectsContainer.classList.toggle(
-                    "show-all"
+        showMoreBtn.addEventListener(
+            "click",
+            () => {
+                const isShowingAll =
+                    projectsContainer.classList.toggle(
+                        "show-all"
+                    );
+
+                showMoreBtn.classList.toggle(
+                    "active",
+                    isShowingAll
                 );
 
-            showMoreBtn.classList.toggle(
-                "active",
-                isShowingAll
-            );
+                showMoreBtn.setAttribute(
+                    "aria-expanded",
+                    String(isShowingAll)
+                );
 
-            showMoreBtn.setAttribute(
-                "aria-expanded",
-                String(isShowingAll)
-            );
+                if (buttonText) {
+                    buttonText.textContent =
+                        isShowingAll
+                            ? "Show Less"
+                            : "Show More";
+                }
 
-            if (buttonText) {
-                buttonText.textContent =
-                    isShowingAll
-                        ? "Show Less"
-                        : "Show More";
+                if (!isShowingAll) {
+                    document
+                        .getElementById("projects")
+                        ?.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+                }
             }
-
-            if (!isShowingAll) {
-                document
-                    .getElementById("projects")
-                    ?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
-            }
-        });
+        );
     }
 
+    loadPortfolioProjects();
+
     /* =========================
-       Contact Form - EmailJS
+       Contact Form
     ========================= */
 
     if (contactForm && sendButton) {
@@ -322,90 +546,160 @@ document.addEventListener("DOMContentLoaded", () => {
                     sendButton.innerHTML;
 
                 sendButton.disabled = true;
+
                 sendButton.innerHTML =
                     'Sending... <i class="fa-solid fa-spinner fa-spin"></i>';
 
                 if (formMessage) {
-                    formMessage.textContent = "Sending message...";
-                    formMessage.classList.add("show-message");
+                    formMessage.textContent =
+                        "Sending message...";
+
+                    formMessage.classList.add(
+                        "show-message"
+                    );
                 }
-                const now = new Date();
 
-                    document.getElementById("sentDate").value =
-                        now.toLocaleDateString("en-GB");
+                try {
+                    const now = new Date();
 
-                    document.getElementById("sentTime").value =
-                        now.toLocaleTimeString("en-US", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit"
-                        });
+                    const sentDate =
+                        document.getElementById(
+                            "sentDate"
+                        );
+
+                    const sentTime =
+                        document.getElementById(
+                            "sentTime"
+                        );
+
+                    if (sentDate) {
+                        sentDate.value =
+                            now.toLocaleDateString(
+                                "en-GB"
+                            );
+                    }
+
+                    if (sentTime) {
+                        sentTime.value =
+                            now.toLocaleTimeString(
+                                "en-US",
+                                {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit"
+                                }
+                            );
+                    }
+
+                    if (
+                        typeof emailjs ===
+                        "undefined"
+                    ) {
+                        throw new Error(
+                            "EmailJS library is not loaded"
+                        );
+                    }
 
                     await emailjs.sendForm(
                         "service_fbpr9bm",
                         "template_67abrsw",
                         contactForm,
                         {
-                            publicKey: "5vVSBeW_z2nhj83ZR"
+                            publicKey:
+                                "5vVSBeW_z2nhj83ZR"
                         }
                     );
 
-                try {
-                    await emailjs.sendForm(
-                        "service_fbpr9bm",
-                        "template_67abrsw",
-                        contactForm
-                    );
+                    try {
+                        const response =
+                            await fetch(
+                                "http://localhost:5000/api/contact",
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            name:
+                                                document.getElementById(
+                                                    "name"
+                                                )?.value || "",
+
+                                            email:
+                                                document.getElementById(
+                                                    "email"
+                                                )?.value || "",
+
+                                            subject:
+                                                document.getElementById(
+                                                    "subject"
+                                                )?.value || "",
+
+                                            message:
+                                                document.getElementById(
+                                                    "message"
+                                                )?.value || ""
+                                        })
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(
+                                data.message ||
+                                "Failed to save message"
+                            );
+                        }
+
+                        console.log(
+                            "Message saved to MongoDB:",
+                            data
+                        );
+
+                    } catch (databaseError) {
+                        console.error(
+                            "MongoDB save error:",
+                            databaseError
+                        );
+                    }
 
                     if (formMessage) {
                         formMessage.textContent =
                             "Message sent successfully!";
                     }
 
-                    // Save message to MongoDB
-                    try {
-                        const response = await fetch("http://localhost:5000/api/contact", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                name: document.getElementById("name").value,
-                                email: document.getElementById("email").value,
-                                subject: document.getElementById("subject").value,
-                                message: document.getElementById("message").value
-                            })
-                        });
+                    contactForm.reset();
 
-                        const data = await response.json();
+                } catch (error) {
+                    console.error(
+                        "Contact form error:",
+                        error
+                    );
 
-                        if (!response.ok) {
-                            throw new Error(data.message || "Failed to save message");
-                        }
-
-                        console.log("Saved to MongoDB:", data);
-                    } catch (err) {
-                        console.error("MongoDB Error:", err);
+                    if (formMessage) {
+                        formMessage.textContent =
+                            error.text ||
+                            error.message ||
+                            "Failed to send message.";
                     }
 
-                    contactForm.reset();
-                }  catch (error) {
-                    console.error("EmailJS full error:", error);
-                    console.error("Status:", error.status);
-                    console.error("Message:", error.text);
-
-                    alert(
-                        `EmailJS Error ${error.status}: ${error.text}`
-                    );
-                }
-                 finally {
+                } finally {
                     sendButton.disabled = false;
+
                     sendButton.innerHTML =
                         originalButtonContent;
 
                     setTimeout(() => {
                         if (formMessage) {
-                            formMessage.textContent = "";
+                            formMessage.textContent =
+                                "";
+
                             formMessage.classList.remove(
                                 "show-message"
                             );
@@ -441,25 +735,40 @@ document.addEventListener("DOMContentLoaded", () => {
             characterIndex++;
 
             typingText.textContent =
-                title.substring(0, characterIndex);
+                title.substring(
+                    0,
+                    characterIndex
+                );
 
-            if (characterIndex === title.length) {
+            if (
+                characterIndex ===
+                title.length
+            ) {
                 deleting = true;
 
-                setTimeout(typingAnimation, 1500);
+                setTimeout(
+                    typingAnimation,
+                    1500
+                );
+
                 return;
             }
+
         } else {
             characterIndex--;
 
             typingText.textContent =
-                title.substring(0, characterIndex);
+                title.substring(
+                    0,
+                    characterIndex
+                );
 
             if (characterIndex === 0) {
                 deleting = false;
 
                 titleIndex =
-                    (titleIndex + 1) % titles.length;
+                    (titleIndex + 1) %
+                    titles.length;
             }
         }
 

@@ -1,78 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin Dashboard | Thanujithan Portfolio</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="css/admin.css">
+    <title>
+        Admin Dashboard | Thanujithan Portfolio
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/admin.css"
+    >
 
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
+
 </head>
 
 <body>
 
     <div class="admin-container">
 
-        <!-- Sidebar -->
+        <!-- =========================
+             Sidebar
+        ========================== -->
+
         <aside class="sidebar">
 
             <div class="sidebar-logo">
-                <h2>ST Admin</h2>
-                <p>Portfolio Dashboard</p>
-            </div>
 
-            
+                <h2>ST Admin</h2>
+
+                <p>Portfolio Dashboard</p>
+
+            </div>
 
             <nav class="sidebar-menu">
 
-                <a href="#" class="menu-item active">
+                <a
+                    href="#dashboard"
+                    class="menu-item active"
+                >
                     <i class="fa-solid fa-chart-line"></i>
-                    Dashboard
+                    <span>Dashboard</span>
                 </a>
 
-                <a href="#messages-section" class="menu-item">
+                <a
+                    href="#messages-section"
+                    class="menu-item"
+                >
                     <i class="fa-solid fa-envelope"></i>
-                    Messages
+                    <span>Messages</span>
                 </a>
 
-                <a href="index.html" class="menu-item">
+                <a
+                    href="#projects-section"
+                    class="menu-item"
+                    id="projectsMenu"
+                >
+                    <i class="fa-solid fa-code"></i>
+                    <span>Projects</span>
+                </a>
+
+                <a
+                    href="index.html"
+                    class="menu-item"
+                >
                     <i class="fa-solid fa-globe"></i>
-                    View Portfolio
+                    <span>View Portfolio</span>
                 </a>
 
             </nav>
 
             <div class="sidebar-footer">
+
                 <p>S. Thanujithan</p>
+
                 <small>Administrator</small>
+
             </div>
 
         </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
+        <!-- =========================
+             Main Content
+        ========================== -->
 
-            <!-- Header -->
+        <main
+            class="main-content"
+            id="dashboard"
+        >
+
+            <!-- Dashboard Header -->
+
             <header class="dashboard-header">
 
                 <div>
+
                     <h1>Admin Dashboard</h1>
-                    <p>Manage your portfolio contact messages</p>
+
+                    <p>
+                        Manage portfolio messages and projects
+                    </p>
+
                 </div>
 
-                <div class = "header-actions">
+                <div class="header-actions">
 
-                    <button id="refreshButton" class="refresh-button">
+                    <button
+                        type="button"
+                        id="refreshButton"
+                        class="refresh-button"
+                    >
                         <i class="fa-solid fa-rotate"></i>
                         Refresh
                     </button>
 
-                    <button id="logoutButton" class="menu-item logout-button">
+                    <button
+                        type="button"
+                        id="logoutButton"
+                        class="logout-button"
+                    >
                         <i class="fa-solid fa-right-from-bracket"></i>
                         Logout
                     </button>
@@ -81,55 +138,111 @@
 
             </header>
 
-            <!-- Statistics Cards -->
+            <!-- =========================
+                 Statistics
+            ========================== -->
+
             <section class="statistics">
 
                 <div class="stat-card">
+
                     <div class="stat-icon">
+
                         <i class="fa-solid fa-envelope"></i>
+
                     </div>
 
                     <div>
+
                         <p>Total Messages</p>
+
                         <h2 id="totalMessages">0</h2>
+
                     </div>
+
                 </div>
 
                 <div class="stat-card">
+
                     <div class="stat-icon">
+
                         <i class="fa-solid fa-calendar-day"></i>
+
                     </div>
 
                     <div>
+
                         <p>Today's Messages</p>
+
                         <h2 id="todayMessages">0</h2>
+
                     </div>
+
                 </div>
 
                 <div class="stat-card">
+
                     <div class="stat-icon">
-                        <i class="fa-solid fa-database"></i>
+
+                        <i class="fa-solid fa-code"></i>
+
                     </div>
 
                     <div>
-                        <p>Database</p>
-                        <h2 class="database-status">Connected</h2>
+
+                        <p>Total Projects</p>
+
+                        <h2 id="totalProjects">0</h2>
+
                     </div>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <i class="fa-solid fa-database"></i>
+
+                    </div>
+
+                    <div>
+
+                        <p>Database</p>
+
+                        <h2 class="database-status">
+                            Connected
+                        </h2>
+
+                    </div>
+
                 </div>
 
             </section>
 
-            <!-- Messages Section -->
-            <section class="messages-section" id="messages-section">
+            <!-- =========================
+                 Messages Section
+            ========================== -->
+
+            <section
+                class="messages-section"
+                id="messages-section"
+            >
 
                 <div class="section-header">
 
                     <div>
+
                         <h2>Contact Messages</h2>
-                        <p>Messages received from your portfolio website</p>
+
+                        <p>
+                            Messages received from your portfolio website
+                        </p>
+
                     </div>
 
                     <div class="search-box">
+
                         <i class="fa-solid fa-magnifying-glass"></i>
 
                         <input
@@ -137,32 +250,52 @@
                             id="searchInput"
                             placeholder="Search name, email or subject"
                         >
+
                     </div>
 
                 </div>
 
-                <!-- Loading -->
-                <div id="loadingMessage" class="loading-message">
+                <!-- Loading Message -->
+
+                <div
+                    id="loadingMessage"
+                    class="loading-message"
+                >
                     <i class="fa-solid fa-spinner fa-spin"></i>
                     Loading messages...
                 </div>
 
-                <!-- Error -->
-                <div id="errorMessage" class="error-message"></div>
+                <!-- Error Message -->
 
-                <!-- Desktop Table -->
+                <div
+                    id="errorMessage"
+                    class="error-message"
+                ></div>
+
+                <!-- Desktop Messages Table -->
+
                 <div class="table-container">
 
                     <table>
 
                         <thead>
+
                             <tr>
+
                                 <th>Name</th>
+
                                 <th>Email</th>
+
                                 <th>Subject</th>
+
+                                <th>Status</th>
+
                                 <th>Date</th>
+
                                 <th>Actions</th>
+
                             </tr>
+
                         </thead>
 
                         <tbody id="messagesTableBody"></tbody>
@@ -171,14 +304,138 @@
 
                 </div>
 
-                <!-- Mobile Cards -->
-                <div id="mobileMessages" class="mobile-messages"></div>
+                <!-- Mobile Messages -->
 
-                <!-- Empty State -->
-                <div id="emptyMessage" class="empty-message">
+                <div
+                    id="mobileMessages"
+                    class="mobile-messages"
+                ></div>
+
+                <!-- Empty Message -->
+
+                <div
+                    id="emptyMessage"
+                    class="empty-message"
+                >
+
                     <i class="fa-regular fa-envelope-open"></i>
+
                     <h3>No messages found</h3>
-                    <p>Contact messages will appear here.</p>
+
+                    <p>
+                        Contact messages will appear here.
+                    </p>
+
+                </div>
+
+            </section>
+
+            <!-- =========================
+                 Projects Section
+            ========================== -->
+
+            <section
+                class="projects-section"
+                id="projects-section"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>Projects</h2>
+
+                        <p>
+                            Add, edit and delete portfolio projects
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="refresh-button"
+                        id="addProjectButton"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                        Add Project
+                    </button>
+
+                </div>
+
+                <!-- Project Loading -->
+
+                <div
+                    id="projectsLoadingMessage"
+                    class="loading-message"
+                >
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Loading projects...
+                </div>
+
+                <!-- Project Error -->
+
+                <div
+                    id="projectsErrorMessage"
+                    class="error-message"
+                ></div>
+
+                <!-- Desktop Projects Table -->
+
+                <div
+                    class="table-container"
+                    id="projectsTableContainer"
+                >
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Image</th>
+
+                                <th>Title</th>
+
+                                <th>Technologies</th>
+
+                                <th>Featured</th>
+
+                                <th>Order</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="projectsTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- Mobile Project Cards -->
+
+                <div
+                    id="mobileProjects"
+                    class="mobile-messages"
+                ></div>
+
+                <!-- Empty Projects -->
+
+                <div
+                    id="emptyProjectsMessage"
+                    class="empty-message"
+                >
+
+                    <i class="fa-solid fa-folder-open"></i>
+
+                    <h3>No projects found</h3>
+
+                    <p>
+                        Click Add Project to create your first project.
+                    </p>
+
                 </div>
 
             </section>
@@ -187,12 +444,22 @@
 
     </div>
 
-    <!-- View Message Modal -->
-    <div id="messageModal" class="modal">
+    <!-- =========================
+         Message Details Modal
+    ========================== -->
+
+    <div
+        id="messageModal"
+        class="modal"
+    >
 
         <div class="modal-content">
 
-            <button id="closeModalButton" class="close-modal">
+            <button
+                type="button"
+                id="closeModalButton"
+                class="close-modal"
+            >
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
@@ -201,33 +468,60 @@
             <div class="message-details">
 
                 <div class="detail-group">
+
                     <span>Name</span>
+
                     <p id="modalName"></p>
+
                 </div>
 
                 <div class="detail-group">
+
                     <span>Email</span>
+
                     <p id="modalEmail"></p>
+
                 </div>
 
                 <div class="detail-group">
+
                     <span>Subject</span>
+
                     <p id="modalSubject"></p>
+
                 </div>
 
                 <div class="detail-group">
+
+                    <span>Status</span>
+
+                    <p id="modalStatus"></p>
+
+                </div>
+
+                <div class="detail-group">
+
                     <span>Date and Time</span>
+
                     <p id="modalDate"></p>
+
                 </div>
 
                 <div class="detail-group full-message">
+
                     <span>Message</span>
+
                     <p id="modalMessage"></p>
+
                 </div>
 
             </div>
 
-            <a id="replyButton" class="reply-button" href="#">
+            <a
+                id="replyButton"
+                class="reply-button"
+                href="#"
+            >
                 <i class="fa-solid fa-reply"></i>
                 Reply by Email
             </a>
@@ -236,13 +530,21 @@
 
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal">
+    <!-- =========================
+         Delete Message Modal
+    ========================== -->
+
+    <div
+        id="deleteModal"
+        class="modal"
+    >
 
         <div class="modal-content delete-modal-content">
 
             <div class="delete-icon">
+
                 <i class="fa-solid fa-trash"></i>
+
             </div>
 
             <h2>Delete Message?</h2>
@@ -254,11 +556,19 @@
 
             <div class="delete-actions">
 
-                <button id="cancelDeleteButton" class="cancel-button">
+                <button
+                    type="button"
+                    id="cancelDeleteButton"
+                    class="cancel-button"
+                >
                     Cancel
                 </button>
 
-                <button id="confirmDeleteButton" class="confirm-delete-button">
+                <button
+                    type="button"
+                    id="confirmDeleteButton"
+                    class="confirm-delete-button"
+                >
                     Delete
                 </button>
 
@@ -268,10 +578,221 @@
 
     </div>
 
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
+    <!-- =========================
+         Add / Edit Project Modal
+    ========================== -->
+
+    <div
+        id="projectModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+            <button
+                type="button"
+                id="closeProjectModalButton"
+                class="close-modal"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h2 id="projectModalTitle">
+                Add Project
+            </h2>
+
+            <form id="projectForm">
+
+                <input
+                    type="hidden"
+                    id="projectId"
+                >
+
+                <div class="project-form-grid">
+
+                    <div class="form-group full-width">
+                        <label for="projectTitle">Project Title</label>
+
+                        <input
+                            type="text"
+                            id="projectTitle"
+                            placeholder="Enter project title"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="projectTechnologies">
+                            Technologies
+                        </label>
+
+                        <input
+                            type="text"
+                            id="projectTechnologies"
+                            placeholder="HTML, CSS, JavaScript"
+                        >
+
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="projectDescription">Description</label>
+
+                        <textarea
+                            id="projectDescription"
+                            placeholder="Enter project description"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+
+                        <label for="projectImageUrl">
+                            Image URL
+                        </label>
+
+                        <input
+                            type="text"
+                            id="projectImageUrl"
+                            placeholder="https://example.com/project-image.jpg"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="projectGithubUrl">
+                            GitHub URL
+                        </label>
+
+                        <input
+                            type="url"
+                            id="projectGithubUrl"
+                            placeholder="https://github.com/username/project"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="projectLiveUrl">
+                            Live Website URL
+                        </label>
+
+                        <input
+                            type="url"
+                            id="projectLiveUrl"
+                            placeholder="https://project-demo.com"
+                        >
+
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectDisplayOrder">Display Order</label>
+
+                        <input
+                            type="number"
+                            id="projectDisplayOrder"
+                            min="1"
+                            value="1"
+                        >
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input
+                            type="checkbox"
+                            id="projectFeatured"
+                        >
+
+                        <label for="projectFeatured">
+                            Featured Project
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="modal-actions">
+                    <button
+                        type="button"
+                        id="cancelProjectButton"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="saveProjectButton"
+                    >
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Save Project
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         Delete Project Modal
+    ========================== -->
+
+    <div
+        id="deleteProjectModal"
+        class="modal"
+    >
+
+        <div class="modal-content delete-modal-content">
+
+            <div class="delete-icon">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </div>
+
+            <h2>Delete Project?</h2>
+
+            <p>
+                Are you sure you want to delete this project?
+                This action cannot be undone.
+            </p>
+
+            <div class="delete-actions">
+
+                <button
+                    type="button"
+                    id="cancelDeleteProjectButton"
+                    class="cancel-button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    id="confirmDeleteProjectButton"
+                    class="confirm-delete-button"
+                >
+                    Delete Project
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         Notification
+    ========================== -->
+
+    <div
+        id="notification"
+        class="notification"
+    ></div>
 
     <script src="js/admin.js"></script>
 
 </body>
+
 </html>
