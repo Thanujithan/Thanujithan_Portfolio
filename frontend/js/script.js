@@ -533,182 +533,206 @@ document.addEventListener("DOMContentLoaded", () => {
     loadPortfolioProjects();
 
     /* =========================
-       Contact Form
-    ========================= */
+   CONTACT FORM
+========================= */
 
-    if (contactForm && sendButton) {
-        contactForm.addEventListener(
-            "submit",
-            async (event) => {
-                event.preventDefault();
+const CONTACT_API_URL =
+    "https://thanujithan-portfolio-backend.onrender.com/api/contact";
 
-                const originalButtonContent =
-                    sendButton.innerHTML;
+if (contactForm && sendButton) {
+    contactForm.addEventListener(
+        "submit",
+        async (event) => {
+            event.preventDefault();
 
-                sendButton.disabled = true;
+            const originalButtonContent =
+                sendButton.innerHTML;
 
-                sendButton.innerHTML =
-                    'Sending... <i class="fa-solid fa-spinner fa-spin"></i>';
+            sendButton.disabled = true;
+
+            sendButton.innerHTML =
+                'Sending... <i class="fa-solid fa-spinner fa-spin"></i>';
+
+            if (formMessage) {
+                formMessage.textContent =
+                    "Sending message...";
+
+                formMessage.classList.add(
+                    "show-message"
+                );
+            }
+
+            try {
+                const name =
+                    document
+                        .getElementById("name")
+                        ?.value.trim() || "";
+
+                const email =
+                    document
+                        .getElementById("email")
+                        ?.value.trim() || "";
+
+                const subject =
+                    document
+                        .getElementById("subject")
+                        ?.value.trim() || "";
+
+                const message =
+                    document
+                        .getElementById("message")
+                        ?.value.trim() || "";
+
+                if (
+                    !name ||
+                    !email ||
+                    !subject ||
+                    !message
+                ) {
+                    throw new Error(
+                        "Please fill all fields."
+                    );
+                }
+
+                const now = new Date();
+
+                const sentDate =
+                    document.getElementById(
+                        "sentDate"
+                    );
+
+                const sentTime =
+                    document.getElementById(
+                        "sentTime"
+                    );
+
+                if (sentDate) {
+                    sentDate.value =
+                        now.toLocaleDateString(
+                            "en-GB"
+                        );
+                }
+
+                if (sentTime) {
+                    sentTime.value =
+                        now.toLocaleTimeString(
+                            "en-US",
+                            {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit"
+                            }
+                        );
+                }
+
+                // =========================
+                // SAVE TO MONGODB
+                // =========================
+
+                const response =
+                    await fetch(
+                        CONTACT_API_URL,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    name,
+                                    email,
+                                    subject,
+                                    message
+                                })
+                        }
+                    );
+
+                let data = {};
+
+                try {
+                    data =
+                        await response.json();
+                } catch {
+                    data = {};
+                }
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.message ||
+                        "Failed to save message."
+                    );
+                }
+
+                console.log(
+                    "Message saved to MongoDB:",
+                    data
+                );
+
+                // =========================
+                // SEND EMAIL USING EMAILJS
+                // =========================
+
+                if (
+                    typeof emailjs ===
+                    "undefined"
+                ) {
+                    throw new Error(
+                        "EmailJS library is not loaded."
+                    );
+                }
+
+                await emailjs.sendForm(
+                    "service_fbpr9bm",
+                    "template_67abrsw",
+                    contactForm,
+                    {
+                        publicKey:
+                            "5vVSBeW_z2nhj83ZR"
+                    }
+                );
 
                 if (formMessage) {
                     formMessage.textContent =
-                        "Sending message...";
-
-                    formMessage.classList.add(
-                        "show-message"
-                    );
+                        "Message sent successfully!";
                 }
 
-                try {
-                    const now = new Date();
+                contactForm.reset();
 
-                    const sentDate =
-                        document.getElementById(
-                            "sentDate"
-                        );
+            } catch (error) {
+                console.error(
+                    "Contact form error:",
+                    error
+                );
 
-                    const sentTime =
-                        document.getElementById(
-                            "sentTime"
-                        );
-
-                    if (sentDate) {
-                        sentDate.value =
-                            now.toLocaleDateString(
-                                "en-GB"
-                            );
-                    }
-
-                    if (sentTime) {
-                        sentTime.value =
-                            now.toLocaleTimeString(
-                                "en-US",
-                                {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                    second: "2-digit"
-                                }
-                            );
-                    }
-
-                    if (
-                        typeof emailjs ===
-                        "undefined"
-                    ) {
-                        throw new Error(
-                            "EmailJS library is not loaded"
-                        );
-                    }
-
-                    await emailjs.sendForm(
-                        "service_fbpr9bm",
-                        "template_67abrsw",
-                        contactForm,
-                        {
-                            publicKey:
-                                "5vVSBeW_z2nhj83ZR"
-                        }
-                    );
-
-                    try {
-                        const response =
-                            await fetch(
-                                "http://localhost:5000/api/contact",
-                                {
-                                    method: "POST",
-
-                                    headers: {
-                                        "Content-Type":
-                                            "application/json"
-                                    },
-
-                                    body:
-                                        JSON.stringify({
-                                            name:
-                                                document.getElementById(
-                                                    "name"
-                                                )?.value || "",
-
-                                            email:
-                                                document.getElementById(
-                                                    "email"
-                                                )?.value || "",
-
-                                            subject:
-                                                document.getElementById(
-                                                    "subject"
-                                                )?.value || "",
-
-                                            message:
-                                                document.getElementById(
-                                                    "message"
-                                                )?.value || ""
-                                        })
-                                }
-                            );
-
-                        const data =
-                            await response.json();
-
-                        if (!response.ok) {
-                            throw new Error(
-                                data.message ||
-                                "Failed to save message"
-                            );
-                        }
-
-                        console.log(
-                            "Message saved to MongoDB:",
-                            data
-                        );
-
-                    } catch (databaseError) {
-                        console.error(
-                            "MongoDB save error:",
-                            databaseError
-                        );
-                    }
-
-                    if (formMessage) {
-                        formMessage.textContent =
-                            "Message sent successfully!";
-                    }
-
-                    contactForm.reset();
-
-                } catch (error) {
-                    console.error(
-                        "Contact form error:",
-                        error
-                    );
-
-                    if (formMessage) {
-                        formMessage.textContent =
-                            error.text ||
-                            error.message ||
-                            "Failed to send message.";
-                    }
-
-                } finally {
-                    sendButton.disabled = false;
-
-                    sendButton.innerHTML =
-                        originalButtonContent;
-
-                    setTimeout(() => {
-                        if (formMessage) {
-                            formMessage.textContent =
-                                "";
-
-                            formMessage.classList.remove(
-                                "show-message"
-                            );
-                        }
-                    }, 5000);
+                if (formMessage) {
+                    formMessage.textContent =
+                        error.message ||
+                        "Failed to send message.";
                 }
+
+            } finally {
+                sendButton.disabled = false;
+
+                sendButton.innerHTML =
+                    originalButtonContent;
+
+                setTimeout(() => {
+                    if (formMessage) {
+                        formMessage.textContent =
+                            "";
+
+                        formMessage.classList.remove(
+                            "show-message"
+                        );
+                    }
+                }, 5000);
             }
-        );
-    }
+        }
+    );
+}
 
     /* =========================
        Typing Animation
