@@ -1,5 +1,5 @@
 const express = require("express");
-const Contact = require("../models/Contact");
+const Contact = require("../models/contact");
 const adminAuth = require("../middleware/adminAuth");
 
 const router = express.Router();
