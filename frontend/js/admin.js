@@ -3,10 +3,10 @@
 // ==========================================
 
 const CONTACT_API_URL =
-    "http://localhost:5000/api/contact";
+    "https://thanujithan-portfolio-backend.onrender.com/api/contact";
 
 const PROJECTS_API_URL =
-    "http://localhost:5000/api/projects";
+    "https://thanujithan-portfolio-backend.onrender.com/api/projects";
 
 const adminToken =
     localStorage.getItem("adminToken");

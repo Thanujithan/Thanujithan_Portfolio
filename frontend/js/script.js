@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
        Projects From MongoDB
     ========================= */
 
-    const PROJECTS_API_URL = "http://localhost:5000/api/projects";
+    const PROJECTS_API_URL = "https://thanujithan-portfolio-backend.onrender.com/api/projects";
 
     function escapeHTML(value = "") {
         return String(value)
